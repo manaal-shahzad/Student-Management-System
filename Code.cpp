@@ -342,8 +342,7 @@ void displayTopStudent(Student* students, int count){
 }
 
 void adminSignUp(){
-    char username[20];
-    char password[20];
+    char username[20], password[20];
 
     cout << "\n-------CREATE ADMIN ACCOUNT-------";
 
@@ -360,4 +359,35 @@ void adminSignUp(){
     out.close();
 
     cout << "Account created successfully!" << endl;
+}
+
+bool adminLogin(){
+    char inputUser[20], inputPass[20], savedUser[20], savedPass[20];
+     
+    ifstream in("admin.txt");
+
+    if(!in){
+        cout << "No admin account found!" << endl;
+        return false;
+    }
+
+    in.getline(savedUser, 20);
+    in.getline(savedPass, 20);
+    in.close();
+
+    cout << "Enter Username: " << endl;
+    cin >> ws;
+    cin.getline(inputUser, 20);
+
+    cout << "Enter Password: " << endl;
+    cin >> ws;
+    cin.getline(inputPass, 20);
+
+    if(strcmp(inputUser, savedUser) == 0 && strcmp(inputPass, savedPass) == 0){
+        cout << "Login Successful!";
+        return true;
+    } else{
+        cout << "Incorrect Username or Password!";
+        return false;
+    }
 }
