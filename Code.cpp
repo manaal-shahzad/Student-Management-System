@@ -230,7 +230,7 @@ int getDepartmentStats(Student* students, int count, DepartmentStats* stats, int
 void searchStudentbyRollNo(Student* students, int count) {
     char rollNum[20];
     cout << "Enter the roll number to search with: ";
-    cin>>ws;
+    cin >> ws;
     cin.getline(rollNum, 20);
 
     for (int i = 0; i < count; i++) {
@@ -248,7 +248,7 @@ void searchStudentbyRollNo(Student* students, int count) {
 void updateStudentRecord(Student* students, int &count) {
     char roll[20];
     cout << "Enter roll number to update: ";
-    cin>>ws;
+    cin >> ws;
     cin.getline(roll, 20);
 
     for (int i = 0; i < count; i++) {
@@ -290,7 +290,7 @@ void deleteStudentRecord(Student* students, int &count) {
 
     char roll[20];
     cout << "Enter roll number to delete: ";
-    cin>>ws;
+    cin >> ws;
     cin.getline(roll, 20);
 
     for (int i = 0; i < count; i++) {
@@ -307,3 +307,36 @@ void deleteStudentRecord(Student* students, int &count) {
     cout << "Student not found!" << endl;
 }
 
+void displayTopStudent(Student* students, int count){
+    if(count == 0){
+        cout << "No records available." << endl;
+        return;
+    }
+
+    float highestavg = students[0].average;
+
+    for(int i = 0; i < count; i++){
+        if(students[i].average > highestavg){
+            highestavg = students[i].average;
+        }
+    }
+    
+    cout << "\n---------------------------------------" << endl;
+    cout << "              TOP STUDENTS              " << endl;
+    cout << "---------------------------------------" << endl;
+    for(int i = 0; i < count; i++){
+        if(students[i].average == highestavg){
+            cout << "Roll Number: " << students[i].rollNo << endl;
+        cout << "Name: " << students[i].name << endl;
+        cout << "Department: " << students[i].dept << endl;
+        
+        for(int j = 0; j < students[i].noOfSubs; j++){
+            cout << "Marks " << j + 1 << ": " << students[i].marks[j] << endl;
+        }
+
+        cout << "Average: " << students[i].average << endl;
+        cout << "Grade: " << students[i].grade << endl;
+        cout << "\n---------------------------------------" << endl;
+        }
+    }
+}
