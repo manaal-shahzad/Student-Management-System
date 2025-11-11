@@ -340,3 +340,24 @@ void displayTopStudent(Student* students, int count){
         }
     }
 }
+
+void adminSignUp(){
+    char username[20];
+    char password[20];
+
+    cout << "\n-------CREATE ADMIN ACCOUNT-------";
+
+    cout << "Enter Admin Username: " << endl;
+    cin >> ws;
+    cin.getline(username, 20);
+
+    cout << "Enter Password: " << endl;
+    cin >> ws;
+    cin.getline(password, 20);
+
+    ofstream out("admin.txt");
+    out << username << endl << password;
+    out.close();
+
+    cout << "Account created successfully!" << endl;
+}
