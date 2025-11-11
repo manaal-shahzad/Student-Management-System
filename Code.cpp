@@ -227,3 +227,83 @@ int getDepartmentStats(Student* students, int count, DepartmentStats* stats, int
 
     return deptCount;
 }
+void searchStudentbyRollNo(Student* students, int count) {
+    char rollNum[20];
+    cout << "Enter the roll number to search with: ";
+    cin>>ws;
+    cin.getline(rollNum, 20);
+
+    for (int i = 0; i < count; i++) {
+        if (strcmp(students[i].rollNo, rollNum) == 0) {
+            cout << "Student found!" << endl;
+            cout << "Name: " << students[i].name << endl;
+            cout << "Department: " << students[i].dept << endl;
+            cout << "Average: " << students[i].average << endl;
+            cout << "Grade: " << students[i].grade << endl;
+            return;
+        }
+    }
+    cout << "Student not found!" << endl;
+}
+void updateStudentRecord(Student* students, int &count) {
+    char roll[20];
+    cout << "Enter roll number to update: ";
+    cin>>ws;
+    cin.getline(roll, 20);
+
+    for (int i = 0; i < count; i++) {
+        if (strcmp(students[i].rollNo, roll) == 0) {
+            cout << "Enter the new name: ";
+            cin.getline(students[i].name, 50);
+            cout << "Enter the new department: ";
+            cin.getline(students[i].dept, 50);
+
+            cout << "Enter number of subjects: ";
+            cin >> students[i].noOfSubs;
+
+            int sum = 0;
+            for (int j = 0; j < students[i].noOfSubs; j++) {
+                do {
+                    cout << "Enter marks for subject " << j + 1 << " (0-100): ";
+                    cin >> students[i].marks[j];
+                    if (students[i].marks[j] < 0 || students[i].marks[j] > 100) {
+                        cout << "Invalid marks! Please enter a value between 0 and 100." << endl;
+                    }
+                } while (students[i].marks[j] < 0 || students[i].marks[j] > 100);
+                sum += students[i].marks[j];
+            }
+
+            students[i].average = (float)sum / students[i].noOfSubs;
+            students[i].grade = calcGrade(students[i].average);
+
+            cout << "Record updated successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Student not found!" << endl;
+}
+void deleteStudentRecord(Student* students, int &count) {
+    if (count == 0) {
+        cout << "No records to delete." << endl;
+        return;
+    }
+
+    char roll[20];
+    cout << "Enter roll number to delete: ";
+    cin>>ws;
+    cin.getline(roll, 20);
+
+    for (int i = 0; i < count; i++) {
+        if (strcmp(students[i].rollNo, roll) == 0) {
+            for (int j = i; j < count - 1; j++) {
+                students[j] = students[j + 1];
+            }
+            count--;
+            cout << "Student record deleted successfully!" << endl;
+            return;
+        }
+    }
+
+    cout << "Student not found!" << endl;
+}
+
