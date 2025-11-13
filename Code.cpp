@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
+#include <windows.h>
 using namespace std;
 
 struct Student{
@@ -390,4 +392,231 @@ bool adminLogin(){
         cout << "Incorrect Username or Password!";
         return false;
     }
+}
+
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+void displayEverything(Student* students, int count) {
+    if (count == 0) {
+        setColor(12); // Red
+        cout << "No student records to display!" << endl;
+        setColor(7); // Reset to white
+        return;
+    }
+
+    setColor(11); // Cyan
+    cout << "\n=========================================\n";
+    cout << "          COMPLETE STUDENT REPORT        \n";
+    cout << "=========================================\n";
+    setColor(7);
+
+    for (int i = 0; i < count; i++) {
+        setColor(9); // Blue
+        cout << "\nStudent #" << i + 1 << endl;
+        cout << "-----------------------------------------" << endl;
+        setColor(7);
+
+        setColor(15); cout << "Roll No: "; setColor(7); cout << students[i].rollNo << endl;
+        setColor(15); cout << "Name: "; setColor(7); cout << students[i].name << endl;
+        setColor(15); cout << "Department: "; setColor(7); cout << students[i].dept << endl;
+
+        cout << "Marks: ";
+        for (int j = 0; j < students[i].noOfSubs; j++) {
+            cout << students[i].marks[j];
+            if (j < students[i].noOfSubs - 1) cout << ", ";
+        }
+        cout << endl;
+
+        setColor(15); cout << "Average: "; setColor(7);
+        cout << fixed << setprecision(2) << students[i].average << endl;
+
+        switch (students[i].grade) {
+            case 'A': setColor(10); break; // Green
+            case 'B': setColor(11); break; // Cyan
+            case 'C': setColor(14); break; // Yellow
+            case 'D': setColor(13); break; // Pink
+            case 'F': setColor(12); break; // Red
+            default: setColor(7); break; // White
+        }
+        cout << "Grade: " << students[i].grade << endl;
+        setColor(7); // reset
+    }
+
+    setColor(11);
+    cout << "\n=========================================\n";
+    cout << "          DEPARTMENT STATISTICS          \n";
+    cout << "=========================================\n";
+    setColor(15);
+
+    DepartmentStats stats[50];
+    int deptCount = getDepartmentStats(students, count, stats, 50);
+
+    cout << left << setw(20) << "Department"
+         << setw(15) << "Students"
+         << setw(15) << "Avg Marks"
+         << setw(8) << "A"
+         << setw(8) << "B"
+         << setw(8) << "C"
+         << setw(8) << "D"
+         << setw(8) << "F" << endl;
+
+    setColor(8);
+    cout << "--------------------------------------------------------------" << endl;
+    setColor(7);
+
+    for (int i = 0; i < deptCount; i++) {
+        cout << left << setw(20) << stats[i].dept
+             << setw(15) << stats[i].studentCount
+             << setw(15) << fixed << setprecision(2) << stats[i].deptAverage
+             << setw(8) << stats[i].gradeA
+             << setw(8) << stats[i].gradeB
+             << setw(8) << stats[i].gradeC
+             << setw(8) << stats[i].gradeD
+             << setw(8) << stats[i].gradeF << endl;
+    }
+
+    setColor(11);
+    cout << "\n=========================================\n";
+    cout << "              TOP STUDENT(S)             \n";
+    cout << "=========================================\n";
+    setColor(7);
+
+    float highestAvg = students[0].average;
+    for (int i = 1; i < count; i++)
+        if (students[i].average > highestAvg)
+            highestAvg = students[i].average;
+
+    for (int i = 0; i < count; i++) {
+        if (students[i].average == highestAvg) {
+            setColor(10);
+            cout << "\n⭐ Top Student ⭐" << endl;
+            setColor(15); cout << "Name: "; setColor(7); cout << students[i].name << endl;
+            setColor(15); cout << "Roll No: "; setColor(7); cout << students[i].rollNo << endl;
+            setColor(15); cout << "Dept: "; setColor(7); cout << students[i].dept << endl;
+            setColor(15); cout << "Average: "; setColor(10); cout << students[i].average << endl;
+            setColor(15); cout << "Grade: "; setColor(10); cout << students[i].grade << endl;
+            setColor(7);
+        }
+    }
+
+    setColor(11);
+    cout << "\n=========================================\n";
+    setColor(7);
+}
+ 
+int main() 
+{
+    system("cls"); 
+    setColor(11); // Cyan
+    cout << "=============================================\n";
+    cout << "   🎓 STUDENT RECORD MANAGEMENT SYSTEM 🎓\n";
+    cout << "=============================================\n\n";
+    setColor(7); 
+
+    const char* filename = "students.txt";
+    const int SIZE = 100;
+    Student students[SIZE];
+    int count = 0;
+    bool loggedIn = false;
+
+    int choice;
+    while (true) {
+        setColor(14); // Yellow
+        cout << "\n1. Admin Login\n2. Admin Sign Up\n3. Exit\n";
+        setColor(7);
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            if (adminLogin()) {
+                loggedIn = true;
+                break;
+            } else {
+                setColor(12);
+                cout << "\nLogin failed. Try again.\n";
+                setColor(7);
+            }
+        } else if (choice == 2) {
+            adminSignUp();
+        } else if (choice == 3) {
+            setColor(12);
+            cout << "Exiting program...\n";
+            setColor(7);
+            return 0;
+        } else {
+            setColor(12);
+            cout << "Invalid option! Try again.\n";
+            setColor(7);
+        }
+    }
+
+    loadFromFile(students, count, filename);
+
+    do {
+        setColor(11);
+        cout << "\n=============================================\n";
+        cout << "                MAIN MENU\n";
+        cout << "=============================================\n";
+        setColor(7);
+        cout << "1. Add Student Record\n";
+        cout << "2. Display All Students\n";
+        cout << "3. Search Student by Roll No\n";
+        cout << "4. Update Student Record\n";
+        cout << "5. Delete Student Record\n";
+        cout << "6. Display Complete Report\n";
+        cout << "7. Save Records to File\n";
+        cout << "8. Load Records from File\n";
+        cout << "9. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        system("cls"); 
+
+        switch (choice) {
+            case 1:
+                addStudent(students, count, SIZE);
+                break;
+            case 2:
+                displayStudents(students, count);
+                break;
+            case 3:
+                searchStudentbyRollNo(students, count);
+                break;
+            case 4:
+                updateStudentRecord(students, count);
+                break;
+            case 5:
+                deleteStudentRecord(students, count);
+                break;
+            case 6:
+                displayEverything(students, count);
+                break;
+            case 7:
+                saveToFile(students, count, filename);
+                break;
+            case 8:
+                loadFromFile(students, count, filename);
+                break;
+            case 9:
+                setColor(12);
+                cout << "\nSaving and exiting program...\n";
+                setColor(7);
+                saveToFile(students, count, filename);
+                return 0;
+            default:
+                setColor(12);
+                cout << "Invalid choice! Please try again.\n";
+                setColor(7);
+        }
+
+        setColor(8);
+        cout << "\nPress any key to continue...";
+        setColor(7);
+        cin.ignore();
+        cin.get();
+        system("cls");
+
+    } while (true);
 }
