@@ -394,6 +394,91 @@ bool adminLogin(){
     }
 }
 
+oid studentSignUp(){
+    char rollNo[20], password[20];
+
+    cout << "\n-------CREATE STUDENT  ACCOUNT-------";
+
+    cout << "Enter Student Roll No: " << endl;
+    cin >> ws;
+    cin.getline(rollNo, 20);
+
+    cout << "Enter Password: " << endl;
+    cin >> ws;
+    cin.getline(password, 20);
+
+    ofstream out("student.txt");
+    out << rollNo << endl << password;
+    out.close();
+
+    cout << "Account created successfully!" << endl;
+}
+
+void viewOwnRecord(Student* students, int count, const char roll[]){
+    bool found = false;
+
+    for(int i = 0; i < count; i++){
+        if(strcmp(students[i].rollNo, roll) == 0){
+            found = true;
+
+            cout << "\n--------- YOUR RECORD ---------\n";
+            cout << "Roll Number: " << students[i].rollNo << endl;
+            cout << "Name: " << students[i].name << endl;
+            cout << "Department: " << students[i].dept << endl;
+            
+            for(int j = 0; j < students[i].noOfSubs; j++){
+                cout << "Marks " << j + 1 << ": " << students[i].marks[j] << endl;
+            }
+
+            cout << "Average: " << students[i].average << endl;
+            cout << "Grade: " << students[i].grade << endl;
+            cout << "--------------------------------\n";
+
+            break;
+        }
+    }
+
+    if(!found){
+        cout << "\nNo record found for this roll number.\n";
+    }
+}
+
+bool studentLogin(Student* students, int count){
+    char inputRoll[20], inputPass[20];
+    char savedRoll[20], savedPass[20];
+
+    ifstream in("student.txt");
+
+    if(!in){
+        cout << "No student account found! Please sign up first.\n";
+        return false;
+    }
+
+    in.getline(savedRoll, 20);
+    in.getline(savedPass, 20);
+    in.close();
+
+    cout << "Enter Roll No: ";
+    cin >> ws;
+    cin.getline(inputRoll, 20);
+
+    cout << "Enter Password: ";
+    cin >> ws;
+    cin.getline(inputPass, 20);
+
+    if(strcmp(inputRoll, savedRoll) == 0 && strcmp(inputPass, savedPass) == 0){
+        cout << "\nLogin Successful!\n";
+
+        viewOwnRecord(students, count, inputRoll);
+
+        return true;
+    }
+    else{
+        cout << "Incorrect Roll No or Password!\n";
+        return false;
+    }
+}
+
 void setColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
@@ -549,7 +634,7 @@ int main()
             setColor(12);
             cout << "Invalid option! Try again.\n";
             setColor(7);
-        }
+````````````        }
     }
 
     loadFromFile(students, count, filename);
